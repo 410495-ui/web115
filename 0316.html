@@ -1,0 +1,59 @@
+<html>
+     <head>
+         <title>0316-CSS選擇器與顏色設定</title>
+         <style>
+            /* CSS註解 */
+            /* CSS基礎語法
+            選擇器 Selector {
+                property: value;
+                屬性:設定值
+                屬性:設定值
+            }
+            選擇器有三種寫法: html-tag / #id / .class
+            */
+            div {
+                width:200px;
+                height:200px;
+                display:inline-block;/* div預設值是block */
+            }  
+            span{
+                width:200px;
+                height:200px;
+                display:inline-block;/* span預設值是inline */
+
+            } 
+            #d1 {
+                background: blue;
+            }
+            /* 同一種屬性，後寫的設定會覆蓋先寫的設定。與寫在class的順序無關。
+            除非有 !important 改變重要性
+            !important > #id > .class > html.tag
+            */
+            .c1 {
+               background: red !important; 
+            }
+            .c2 {
+                background: yellow;
+            }
+            /*
+            CSS顏色的表示法
+            1.常見英文單字
+            2.色碼:#RRGGBB #000000~#FFFFFF (標準寫法)
+            3.rgb(r,g,b) 0~255 (三原色光的強度)
+            4.hsl(h色相0~360, s彩度0%~100%, L亮度0%~100%)
+            5.rgba(r,g,b,a 可見度0~1)
+            6.hsla(h,s,l,a 可見度0~1)
+            */
+         </style>
+     </head>
+     <body>
+        <!-- div: 區塊容器 block -->
+         <div id="d1" class="c1"></div>
+         <div id="d2" class="c1 c2"></div>
+
+         <!-- span: 行內容器 inline -->               
+         <span id="s1" class="c2"></span>
+         <span id="s2" class="c2 c1"></span>
+
+     </body>
+</html>
