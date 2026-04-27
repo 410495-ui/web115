@@ -1,0 +1,74 @@
+<html>
+<head>
+    <title>0427-JS元素控制</title>
+    <style>
+        .dv{
+            display: inline-block;
+            width: 100px;
+            height: 80px;
+            margin: 5px;
+            border: 1px solid black;
+            border-radius: 5px;
+        }
+        .selected{
+            border-color: red;
+            border-width: 4px;
+        }
+        .select-one{
+            border-color: red;
+            border-width: 4px;
+        }
+    </style>
+    <script>
+        function toggle(elm) {
+            //elm.style.borderColor="red";
+            if(elm.classList.contains("selected")) {
+                elm.classList.remove("selected");
+            }else{
+                elm.classList.add("selected");
+            }
+        }
+        function setColor() {
+            //document.getElementById("d1").style.backgroundColor=event.target.value;
+            Array.from(document.getElementByIdClassName("selected")).forEach((a)=>{
+                a.style.backgroundColor=event.target.value;
+                a.classList.remove("selected");
+            });
+        }
+        ///////////////////////////////////////////////////////
+        my={elm:null}; //全域變數
+        function choose(elm){
+            if(my.elm != null){
+                my.elm.classList.remove("select-one");
+            }
+            elm.classList.add("select-one");
+            my.elm=elm;
+        }
+        function setOneColor(){
+            my.elm.style.backgroundColor=event.target.value;
+        }
+        function setRound(){
+            my.elm.style.borderRadius=event.target.value+"px";
+        }
+    </script>
+</head>
+<body>
+    <div class="dv"  onclick="toggle(this);"></div>
+    <div class="dv"  onclick="toggle(this);"></div>
+    <div class="dv"  onclick="toggle(this);"></div>
+    <div class="dv"  onclick="toggle(this);"></div>
+    <div>
+        <input type="color" oninput="setColor();">
+    </div>
+    <hr>
+    <div class="dv" id="d1" onclick="choose(this);"></div>
+    <div class="dv" id="d2" onclick="choose(this);"></div>
+    <div class="dv" id="d3" onclick="choose(this);"></div>
+    <div class="dv" id="d4" onclick="choose(this);"></div>
+    <div>
+        <input type="color" oninput="setOneColor();">
+        <input type="range" max=50 oninput="setRound();">
+
+    </div>
+</body>    
+</html>
