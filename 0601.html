@@ -34,6 +34,9 @@
         }
     </style>
     <script>
+        function getRand(min,max) {
+            return Math.floor(Math.random() * (max-min+1))+min;
+        }
         function showPos(obj) {
             obj.style.top=obj.pos.y + "px";
             obj.style.left=obj.pos.x + "px";
@@ -45,6 +48,12 @@
             else if(ship.way["ArrowRight"] && ship.pos.x<540)ship.pos.x++;
             showPos(ship);
         }
+        function ufo_move(){
+            
+            ufo.pos.x+=getRand(-120,120);
+            showPos(ufo);
+        }
+        
         function bullet_move(b){
             if(b.pos.y<0){
                 clearInterval(b.move);
@@ -53,28 +62,36 @@
                 b.pos.y--;
                 showPos(b);
                 var hit=Array.from(document.getElementsByClassName("ufo")).filter((u)=>{
-                    return (u.pos.x < b.pos.x) && (u.pos.x + 180 > b.pos.x + 10) && (u.pos.y +120 >= b.pos.y)
+                    return (u.pos.x < b.pos.x) && (u.pos.x + 180 > b.pos.x + 10) && (u.pos.y +120 >= b.pos.y);
                 });
                 if(hit.length>0){
-                    hit.forEach((u)=>{
-                    clearInterval(u.move);
-                    u.remove();
-                });
+                    b.remove;
+                   ufo_HP-=2;
+
                 }
             }
         }
         function shoot() {
             var b=document.createElement("div");
             b.className="bullet";
-            b.pos={x:ship.pos.x+25, y:ship.pos.y-6};
-            b.move=setInterval(bullet_move,5,b);
+            b.pos={x:ship.pos.x+30, y:ship.pos.y-30};
+            b.move=setInterval(bullet_move,3,b);
             document.getElementById("universe").appendChild(b);
         }
+        function game_start(){
+            if(gameing) return;
+            gameing=true;
+            ufo_move();
+            ufo_HP=200;
+            ship_HP=100;
+        }
         function game_init() {
+            ufo=document.getElementById("ufo");
             ship=document.getElementById("ship");
             ship.pos={x:270,y:500};
             ship.way={"ArrowLeft":0,"ArrowRight":0,"ArrowUp":0,"ArrowDown":0,};
             ship.move=setInterval(ship_move,5);
+            gameing=false;
         }
         function mykeydown() {
             event.preventDefault();
@@ -93,10 +110,11 @@
     </script>
 </head>
 <body onload="game_init()" onkeydown="mykeydown()" onkeyup="mykeyup()">
-    <div id="uni" onclick="">
+    <div>HP<span id="ufo_HP"></span></div>
+    <div id="uni" onclick="game_start()">
         <img id="ship" src="pic/ship.png">
         <img id="ufo" src="pic/ufo.png">
-
     </div>
+    <div>HP</div>
 </body>    
 </html>
