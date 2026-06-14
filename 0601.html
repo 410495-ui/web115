@@ -32,6 +32,13 @@
             background: white;
             position: absolute;
         }
+        .ubullet{
+            width: 30px;
+            height: 30px;
+            background: red;
+            border-radius: 100% 100% 100% 100%;
+            position: absolute;
+        }
     </style>
     <script>
         function getRand(min,max) {
@@ -42,19 +49,25 @@
             obj.style.left=obj.pos.x + "px";
         }
         function ship_move(){
+            if(!gameing) return;
             if(ship.way["ArrowUp"] && ship.pos.y>0)ship.pos.y--;
             else if(ship.way["ArrowDown"] && ship.pos.y<510)ship.pos.y++;
             else if(ship.way["ArrowLeft"] && ship.pos.x>0)ship.pos.x--;
             else if(ship.way["ArrowRight"] && ship.pos.x<540)ship.pos.x++;
             showPos(ship);
         }
+        
         function ufo_move(){
-            
-            ufo.pos.x+=getRand(-120,120);
+            if(!gameing) return;
+            ufo.pos.x += ufo.speed;
+            if(ufo.pos.x <= 0 || ufo.pos.x >= 240){
+                ufo.speed *= -1;
+            }
             showPos(ufo);
         }
         
         function bullet_move(b){
+            if(!gameing) return;
             if(b.pos.y<0){
                 clearInterval(b.move);
                 b.remove();
@@ -62,31 +75,86 @@
                 b.pos.y--;
                 showPos(b);
                 var hit=Array.from(document.getElementsByClassName("ufo")).filter((u)=>{
-                    return (u.pos.x < b.pos.x) && (u.pos.x + 180 > b.pos.x + 10) && (u.pos.y +120 >= b.pos.y);
+                    return (b.pos.x + 10 >= u.pos.x)&&(b.pos.x <= u.pos.x + 360)&&(b.pos.y + 10 >= u.pos.y)&&(b.pos.y <= u.pos.y + 240)
                 });
                 if(hit.length>0){
-                    b.remove;
-                   ufo_HP-=2;
-
+                    clearInterval(b.move);
+                    b.remove();
+                    ufo_HP-=4;
+                    if(ufo_HP<=0) {
+                        game_win();
+                    }
+                    document.getElementById("ufo_HP").innerHTML=ufo_HP;
+                }
+            }
+        }
+        function ubullet_move(ub){
+            if(ub.pos.y>600){
+                clearInterval(ub.move);
+                ub.remove();
+            }else{
+                ub.pos.x+=getRand(-3,3);
+                ub.pos.y++;
+                showPos(ub);
+                var hit=Array.from(document.getElementsByClassName("ufo")).filter((u)=>{
+                    return (ub.pos.x + 10 >= ship.pos.x)&&(ub.pos.x <= ship.pos.x + 30)&&(ub.pos.y + 10 >= ship.pos.y)&&(ub.pos.y <= ship.pos.y + 70)
+                });
+                if(hit.length>0){
+                    clearInterval(ub.move);
+                    ub.remove();
+                    ship_HP-=10;
+                    if(ship_HP<=0) {
+                        game_over();
+                    }
+                    document.getElementById("ship_HP").innerHTML=ship_HP;
                 }
             }
         }
         function shoot() {
+            if(!gameing) return;
             var b=document.createElement("div");
             b.className="bullet";
-            b.pos={x:ship.pos.x+30, y:ship.pos.y-30};
+            b.pos={x:ship.pos.x+26, y:ship.pos.y-30};
+            showPos(b);
             b.move=setInterval(bullet_move,3,b);
-            document.getElementById("universe").appendChild(b);
+            document.getElementById("uni").appendChild(b);
+        }
+        function ufo_shoot() {
+            if(!gameing) return;
+            var ub=document.createElement("div");
+            ub.className="ubullet";
+            ub.pos={x:ufo.pos.x+getRand(0,330), y:ufo.pos.y+240};
+            showPos(ub);
+            ub.move=setInterval(ubullet_move,3,ub);
+            document.getElementById("uni").appendChild(ub);
         }
         function game_start(){
             if(gameing) return;
             gameing=true;
-            ufo_move();
             ufo_HP=200;
             ship_HP=100;
+            document.getElementById("ufo_HP").innerHTML=ufo_HP;
+            document.getElementById("ship_HP").innerHTML=ship_HP;
+            ufo.move=setInterval(ufo_move,16);
+            setInterval(ufo_shoot,500);
+        }
+        function game_win(){
+            gameing=false;
+            clearInterval(ufo.move);
+            clearInterval(ship.move);
+            alert("You Win!");
+        }
+        function game_over(){
+            gameing=false;
+            clearInterval(ufo.move);
+            clearInterval(ship.move);
+            alert("Game Over!");
         }
         function game_init() {
             ufo=document.getElementById("ufo");
+            ufo.pos={x:120,y:0};
+            ufo.speed=3;
+            showPos(ufo);
             ship=document.getElementById("ship");
             ship.pos={x:270,y:500};
             ship.way={"ArrowLeft":0,"ArrowRight":0,"ArrowUp":0,"ArrowDown":0,};
@@ -110,11 +178,11 @@
     </script>
 </head>
 <body onload="game_init()" onkeydown="mykeydown()" onkeyup="mykeyup()">
-    <div>HP<span id="ufo_HP"></span></div>
+    <div>UFO_HP:<span id="ufo_HP"></span></div>
     <div id="uni" onclick="game_start()">
         <img id="ship" src="pic/ship.png">
-        <img id="ufo" src="pic/ufo.png">
+        <img id="ufo" class="ufo" src="pic/ufo.png">
     </div>
-    <div>HP</div>
+    <div>Ship_HP:<span id="ship_HP"></span></div>
 </body>    
 </html>
